@@ -59,7 +59,7 @@ void Del(long int a,long int b)
            cout<<-1<<'\n';
          }	
 }
-void Search(long int d)
+void Search(float d)
 {
 	struct node* temp;
 	temp=head;
@@ -129,7 +129,7 @@ int main()
 		}
 		else if(t==4)
 		{
-			long int x;
+			float x;
 			cin>>x;
 			Search(x);
 		}
