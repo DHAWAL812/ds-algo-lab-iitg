@@ -20,6 +20,7 @@ void DelFirst()
 {
 	if(head==NULL)
 	{
+		cout<<-1<<'\n';
 		return;
 	}
 	struct node* temp;
@@ -31,6 +32,7 @@ void Del(long int a,long int b)
 {
 	if(head==NULL)
 	{
+		cout<<-1<<'\n';
 		return;
 	}
 	struct node* temp;
@@ -48,7 +50,6 @@ void Del(long int a,long int b)
 			{prev->next=temp->next;
 			free(temp);
 			}
-                        cout<<0<<'\n';
 			break;
 		}
 		prev=temp;
@@ -63,13 +64,22 @@ void Search(float d)
 {
 	struct node* temp;
 	temp=head;
+	long int a=0;
 	while(temp!=NULL)
 	{
 		if(sqrt((temp->x)*(temp->x)+(temp->y)*(temp->y))-d<0.000001)
 		{
-			cout<<"("<<temp->x<<","<<temp->y<<") ";
+			a++;
 		}
 		temp=temp->next;
+	}
+	if(a==0)
+	{
+		cout<<-1;
+	}
+	else
+	{
+		cout<<a;
 	}
 	cout<<'\n';
 }
