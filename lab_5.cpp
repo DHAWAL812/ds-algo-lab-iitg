@@ -300,6 +300,10 @@ int main()
         if(flag==1)
         {
             m[l.substr(0,c)]=q;
+            if(q==INT_MIN)
+        {
+            cout<<"can't be evaluated"<<endl;
+        }
             continue;
         }
 
@@ -308,11 +312,11 @@ int main()
 
         if(q==INT_MIN)
         {
-            cout<<"can't be evaluated\n";
+            cout<<"can't be evaluated"<<endl;
         }
         else
         {
-            cout<<q<<"\n";
+            cout<<q<<endl;
         }
         }
 
