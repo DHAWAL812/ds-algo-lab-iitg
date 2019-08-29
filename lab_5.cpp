@@ -1,319 +1,323 @@
-#include<bits/stdc++.h> 
-using namespace std; 
- 
-//Function to return precedence of operators 
-int prec(char c) 
-{ 
-    if(c == '^') 
-    return 3; 
-    else if(c == '*' || c == '/') 
-    return 2; 
-    else if(c == '+' || c == '-') 
-    return 1; 
+#include<iostream>
+#include<stack>
+#include<bits/stdc++.h>
+using namespace std;
+map<string,long long int> m;
+map<string,long long int>::iterator it;
+
+struct tree{
+string data;
+
+tree *right;
+tree *left;
+};
+bool isOperator(char c)
+{
+    if (c == '+' || c == '-' ||
+            c == '*' || c == '/' ||
+            c == '^' || c=='(' || c==')' || c==',')
+        return true;
+    return false;
+}
+ tree* node(string h)
+{
+    tree* temp=new tree;
+    temp->left=NULL;
+    temp->right=NULL;
+    temp->data=h;
+    return temp;
+}
+tree* makkk(string s)
+{
+  stack<tree *> st;
+  tree *t,*t1,*t2;
+  int i=0;
+  while(i<s.length())
+  {
+   if(!isOperator(s[i]))
+   {
+       string j;
+       while(s[i]!=',' && s[i]!=NULL)
+       {
+           j+=s[i];
+
+           i++;
+       }
+       t=node(j);
+       st.push(t);
+   }
+   else if(s[i]==',')
+   {
+       i++;
+       continue;
+   }
+   else
+   {
+       string j;
+       j+=s[i];
+       t=node(j);
+       t1=st.top();
+       st.pop();
+       t2=st.top();
+       st.pop();
+       t->right=t1;
+       t->left=t2;
+       st.push(t);
+       i++;
+   }
+
+  }
+  t=st.top();
+  st.pop();
+  return t;
+
+
+}
+
+int prec(char c)
+{
+    if(c == '^')
+    return 3;
+    else if(c == '*' || c == '/')
+    return 2;
+    else if(c == '+' || c == '-')
+    return 1;
     else
-    return -1; 
-} 
-  
-// The main function to convert infix expression 
-//to postfix expression 
-string infixToPostfix(string s) 
-{ 
-    std::stack<char> st; 
-    st.push('N'); 
-    long long int l = s.length(); 
-    string ns; 
-    long long int i=0;
+    return -1;
+}
+
+
+
+string infixToPostfix(string s)
+{
+    std::stack<char> st;
+    st.push('N');
+    int l = s.length();
+    string ns;
+    int i=0;
     while(i<l)
-    { 
-        
-  
-        // If the scanned character is an ‘(‘, push it to the stack. 
-        if(s[i] == '(') 
-        {  
-        st.push('('); 
+    {
+
+        if(!isOperator(s[i]))
+        {
+            while(!isOperator(s[i]) && s[i]!=NULL)
+            {
+             ns+=s[i];
+             i++;
+            }
+           ns+=',';
+        }
+        else if(s[0]=='-')
+        {
+            st.push('-');
+            ns+=',';
+            ns+='0';
+            ns+=',';
+            i++;
+        }
+        else if((s[i]=='-'&&i>0)&&(s[i-1]==NULL || s[i-1]=='(' || isOperator(s[i-1])))
+            {
+            st.push('-');
+            ns+=',';
+            ns+='0';
+            ns+=',';
+            i++;
+        }
+
+        else if(s[i] == '(')
+        {
+        st.push('(');
         i++;
         }
-          
-        // If the scanned character is an ‘)’, pop and to output string from the stack 
-        // until an ‘(‘ is encountered. 
-        else if(s[i] == ')') 
-        { 
-            while(st.top() != 'N' && st.top() != '(') 
-            { 
-                char c = st.top(); 
-                st.pop(); 
-               ns += c; 
+
+        else if(s[i] == ')')
+        {
+            while(st.top() != 'N' && st.top() != '(')
+            {
+                char c = st.top();
+                st.pop();
+               ns += c;
                ns+=',';
-            } 
-            if(st.top() == '(') 
-            { 
-                char c = st.top(); 
-                st.pop(); 
-            } 
+            }
+            if(st.top() == '(')
+            {
+                char c = st.top();
+                st.pop();
+            }
             i++;
-        } 
-          
-        //If an operator is scanned 
-        else if(s[i]=='+'||s[i]=='-'||s[i]=='*'||s[i]=='/'||s[i]=='^')
-        { 
-            while(st.top() != 'N' && prec(s[i]) <=prec(st.top())) 
-            { 
-            	if(prec(s[i])==3&&prec(st.top())==3)
-            	break;
-                char c = st.top(); 
-                st.pop(); 
-                ns += c; 
+        }
+
+
+        else{
+            while(!st.empty() && (prec(s[i]) < prec(st.top())||(prec(s[i])==prec(st.top())&&prec(s[i])!=3)) )
+            {
+                char c = st.top();
+                st.pop();
+                ns += c;
                 ns+=',';
-            } 
-            st.push(s[i]); 
+            }
+            st.push(s[i]);
             i++;
-        } 
+        }
+
+
+    }
+
+    while(st.top() != 'N')
+    {
+        char c = st.top();
+        st.pop();
+        ns += c;
+        ns+=',';
+
+    }
+
+
+return ns;
+}
+
+
+ void inorder(tree *t)
+{
+    if(t)
+    {
+        inorder(t->left);
+        cout<<t->data;
+        inorder(t->right);
+    }
+}
+int toInt(string s)
+{
+    int num = 0;
+
+
+     if(s[0]!='-')
+        for (int i=0; i<s.length(); i++)
+            num = num*10 + (int(s[i])-48);
+
+
+
+    else
+        for (int i=1; i<s.length(); i++)
+        {
+            num = num*10 + (int(s[i])-48);
+            num = num*-1;
+        }
+
+    return num;
+}
+long long int eval(tree* root)
+{
+
+    if (!root)
+        return 0;
+    if(eval(root->left)==INT_MIN || eval(root->right)==INT_MIN)
+    {
+        return INT_MIN;
+    }
+
+    if (!root->left && !root->right){
+        bool is_number=true;
+        for(int i=0;i<root->data.size();i++)
+        {
+            if(root->data[i]>='0'&&root->data[i]<='9')
+                continue;
+            else{
+                is_number=false;
+                break;
+            }
+        }
+        if(is_number)
+            return toInt(root->data);
         else
         {
-            while(s[i]>'/'&&s[i]<':')
-            {ns+=s[i];
-            i++;}
-            ns+=',';
+            it=m.find(root->data);
+            if(it!=m.end())
+            {
+            return it->second;
+            }
+            else
+            {
+                return INT_MIN;
+            }
         }
-  
-    } 
-    //Pop all the remaining elements from the stack 
-    while(st.top() != 'N') 
-    { 
-    
-        char c = st.top(); 
-        st.pop(); 
-        ns += c; 
-        ns+=',';
-    } 
-      
-    return ns;
-  
-} 
-struct et 
-{ 
-    string value; 
-    et* left, *right; 
-}; 
-  
-// A utility function to check if 'c' 
-// is an operator 
-bool isOperator(char c) 
-{ 
-    if (c == '+' || c == '-' || 
-            c == '*' || c == '/' || 
-            c == '^') 
-        return true; 
-    return false; 
-} 
-  
-// A utility function to create a new node 
-et* newNode(string v) 
-{ 
-    et *temp = new et; 
-    temp->left = temp->right = NULL; 
-    temp->value = v; 
-    return temp; 
-}; 
-  
-// Returns root of constructed tree for given 
-// postfix expression 
-et* constructTree(string ns) 
-{ 
-    stack<et *> st; 
-    et *t, *t1, *t2; 
-  
-    // Traverse through every character of 
-    // input expression
-    long long int i=0;
-    while(i<ns.length())
-    { 
-        // If operand, simply push into stack 
-        if (!isOperator(ns[i])) 
-        { string fu="";
-        	while(ns[i]!=',')
-        	{
-        		fu+=ns[i];
-        		i++;
-        	}
-            t = newNode(fu); 
-            st.push(t); 
-            i++;
-        } 
-        else // operator 
-        { 
-        	string fu="";
-        	while(ns[i]!=',')
-        	{
-        		fu+=ns[i];
-        		i++;
-        	}
-            t = newNode(fu); 
-            // Pop two top nodes 
-            t1 = st.top(); // Store top 
-            st.pop();      // Remove top 
-            t2 = st.top(); 
-            st.pop(); 
-  
-            //  make them children 
-            t->right = t1; 
-            t->left = t2; 
-  
-            // Add this subexpression to stack 
-            st.push(t); 
-            i++;
-        } 
-    } 
-  
-    //  only element will be root of expression 
-    // tree 
-    t = st.top(); 
-    st.pop(); 
-  
-    return t; 
-} 
-  
-long long int toInt(string s)  
-{  
-     long long int num = 0;  
-      
-    // Check if the integral value is  
-    // negative or not 
-    // If it is not negative, generate the number  
-    // normally 
-    if(s[0]!='-') 
-        for (long long int i=0; i<s.length(); i++)  
-            num = num*10 + (int(s[i])-48);  
-    // If it is negative, calculate the +ve number 
-    // first ignoring the sign and invert the  
-    // sign at the end 
-    else
-        for (long long int i=1; i<s.length(); i++)  
-        { 
-            num = num*10 + (long long int)(int(s[i])-48);  
-            num = num*-1; 
-        } 
-      
-    return num;  
-}  
-long long int eval(et* dha)
-{
-	if(!dha)
-	{
-		return 0;
-	}
-	if(dha->left==NULL&&dha->right==NULL)
-	{
-		return toInt(dha->value);
-	}
-	long long int l_val=eval(dha->left);
-	long long int r_val=eval(dha->right);
-	if (dha->value=="+")  
-        {return l_val+r_val;  }
-  
-    if (dha->value=="-")  
-       {return l_val-r_val;}  
-  
-    if (dha->value=="*")  
-        {return l_val*r_val; } 
-  
-    if(dha->value=="/")
-    {
-    	return l_val/r_val;
     }
+
+
+
+
+    int l_val = eval(root->left);
+
+
+    int r_val = eval(root->right);
+
+
+    if (root->data=="+")
+        return l_val+r_val;
+
+
+    if (root->data=="-")
+        return l_val-r_val;
+
+    if (root->data=="*")
+        return l_val*r_val;
+    if(root->data=="/")
+    return l_val/r_val;
+    if(root->data=="^")
     return pow(l_val,r_val);
+
+
 }
-//Driver program to test above functions 
-int main() 
-{ 
-    long int t;
+
+int main()
+{
+    int t;
     cin>>t;
-    while(t--)
-{    long int a;
-      cin>>a;
-      string exp;
-      string f[26];
-    for(long int hp=0;hp<26;++hp)
+    for(int i=1;i<=t;i++)
     {
-    	f[hp]="";
+        int n;
+        cin>>n;
+        for(int k=1;k<=n;k++)
+        {
+        string l;
+        cin>>l;
+        int flag=0;
+        int c=-1;
+        for(int u=0;u<l.length();u++)
+        {
+            if(l[u]=='=')
+            {
+                flag=1;
+                c=u;
+            }
+        }
+        string h=l.substr(c+1,l.length());
+        string y=infixToPostfix(h);
+
+        tree *t=makkk(y);
+
+        long long int q=eval(t);
+        if(flag==1)
+        {
+            m[l.substr(0,c)]=q;
+            continue;
+        }
+
+
+
+
+        if(q==INT_MIN)
+        {
+            cout<<"can't be evaluated\n";
+        }
+        else
+        {
+            cout<<q<<"\n";
+        }
+        }
+
+  m.clear();
     }
-    while(a--)
-{
-    cin>>exp;
-    int fu;
-    int hu=-1;
-    
-if(exp.length()>=2)
-{
-    	if(exp[1]=='=')
-    	{
-    		hu=1;
-    	}
-    	if(hu==1)
-    	{
-     for(fu=2;fu<exp.length();++fu)
-    {   	
-    	if(exp[fu]>='a'&&exp[fu]<='z')
-    	{
-    		if(f[exp[fu]-'a']!="")
-    		{
-    		exp=exp.substr(0,fu)+f[exp[fu]-'a']+exp.substr(fu+1,exp.length());
-    		}
-    		else
-    		{
-    			cout<<"CANT BE EVALUATED\n";
-    			continue;
-    		}
-    		
-    	}
-    }
-    	}
-    	else
-    	{
-    		for(fu=0;fu<exp.length();++fu)
-    {   	
-    	if(exp[fu]>='a'&&exp[fu]<='z')
-    	{
-    		if(f[exp[fu]-'a']!="")
-    		{
-    		exp=exp.substr(0,fu)+f[exp[fu]-'a']+exp.substr(fu+1,exp.length());
-    		}
-    		
-    	}
-    }
-    
-    	}
+
+
 }
-else
-{
-	if(exp[0]>'a'&&exp[0]<'z')
-	{
-		exp=f[exp[0]-'a'];
-	}
-	if(exp[0]>='0'&&exp[0]<='9')
-	{
-		cout<<exp<<'\n';
-		continue;
-	}
-	if(f[exp[0]-'a']=="")
-	{
-		cout<<"CANT BE EVALUATED";
-		continue;
-	}
-}
-    string ns=infixToPostfix(exp.substr(hu+1,exp.length())); 
-    et* dha=constructTree(ns);
-    long long int o=eval(dha);
-    string d=to_string(o);
-    if(hu==-1)
-    {
-    	cout<<d<<'\n';
-    }
-    else
-    {
-    	f[exp.at(0)-'a']=d;
-    }
-  
- }   
- } 
-} 
