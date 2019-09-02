@@ -33,8 +33,11 @@ int main()
   int n,q;cin>>n;
   int maxid=0;
   int t;
-  while(cin>>t)
+  long long int q;
+  cin>>q;
+  while(q--)
   {
+    cin>>t;
     if(t==1)
     {
       lli u,a;cin>>u>>a;
