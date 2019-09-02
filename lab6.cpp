@@ -45,7 +45,7 @@ int main()
     else
     {
       if(userval[maxid]==0)
-      cout<<"No data available.\n";
+      cout<<"NO DATA AVAILABLE\n";
       else
       cout<<maxid<<"\n";
     }
