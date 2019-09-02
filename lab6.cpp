@@ -30,7 +30,7 @@ lli userval[1000001];
 int main() 
 { 
   //fastio;
-  int n,q;cin>>n;
+  int n;cin>>n;
   int maxid=0;
   int t;
   long long int q;
